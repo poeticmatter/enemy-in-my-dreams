@@ -1,4 +1,5 @@
 import type { GameEvent, GameState } from '../engine/state.ts';
+import { signed } from './cardText.ts';
 
 const nameOf = (state: GameState, id: string) => state.cards[id].name;
 const names = (state: GameState, ids: readonly string[]) => ids.map((id) => nameOf(state, id)).join(', ');
@@ -7,7 +8,7 @@ const names = (state: GameState, ids: readonly string[]) => ids.map((id) => name
 export function describeEvent(state: GameState, event: GameEvent): string | null {
   switch (event.kind) {
     case 'turnStarted':
-      return `— Turn ${event.turn} · deck ${event.deckSize} —`;
+      return `Turn ${event.turn}: ${event.deckSize} cards of health`;
     case 'engaged': {
       const attack = event.attackCardId ? `, attacking with ${nameOf(state, event.attackCardId)}` : '';
       const contributors = event.contributorIds.length > 0 ? `, helped by ${names(state, event.contributorIds)}` : '';
@@ -40,8 +41,4 @@ export function describeEvent(state: GameState, event: GameEvent): string | null
     case 'gameOver':
       return event.outcome === 'won' ? 'You defeated The Dreamer. You wake up.' : 'Your deck is spent. The dream takes you.';
   }
-}
-
-export function signed(value: number): string {
-  return value >= 0 ? `+${value}` : `${value}`;
 }

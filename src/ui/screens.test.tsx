@@ -7,10 +7,10 @@ import { Random } from '../engine/rng.ts';
 import { variantFor } from '../engine/rules.ts';
 import type { GameEvent, GameState } from '../engine/state.ts';
 import { ChoosePanel } from './ChoosePanel.tsx';
+import { DeckStrip } from './DeckStrip.tsx';
 import { describeEvent } from './describeEvent.ts';
 import { FightPanel } from './FightPanel.tsx';
 import { RulesSheet } from './RulesSheet.tsx';
-import { StatusBar } from './StatusBar.tsx';
 
 const noop = () => {};
 const RULES = variantFor('A>+stakes');
@@ -34,12 +34,21 @@ describe('screens', () => {
     const state = playUntil(3, (candidate) => candidate.phase.kind === 'fight');
     if (state.phase.kind !== 'fight') throw new Error('Expected a fight');
     const html = renderToStaticMarkup(<FightPanel state={state} fight={state.phase.fight} onMove={noop} />);
-    expect(html).toMatch(/\d+ \/ \d+/);
+    expect(html).toMatch(/<strong>-?\d+<\/strong> of \d+ needed/);
   });
 
-  it('shows health on the status bar', () => {
+  it('draws one sliver per card in the game on the health strip', () => {
     const { state } = createGame(CURRENT_SET, RULES, 3);
-    expect(renderToStaticMarkup(<StatusBar state={state} />)).toContain('Deck (health)');
+    const slivers = renderToStaticMarkup(<DeckStrip state={state} />).match(/class="sliver /g) ?? [];
+    expect(slivers).toHaveLength(CURRENT_SET.cards.length);
+  });
+
+  it('spells out every part of a card', () => {
+    const { state } = createGame(CURRENT_SET, RULES, 3);
+    const html = renderToStaticMarkup(<ChoosePanel state={state} onMove={noop} />);
+    expect(html).toContain('defense');
+    expect(html).toContain('If you lose:');
+    expect(html).toContain('Win:');
   });
 
   it('explains the stakes rule only when it is on', () => {

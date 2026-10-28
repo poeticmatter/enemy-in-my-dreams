@@ -1,9 +1,10 @@
 import { useEffect, useRef, useState } from 'react';
 import { MAIN_VARIANT_IDS, RECOMMENDED_VARIANT_ID, variantFor } from '../engine/rules.ts';
+import { deckSize, type GameState } from '../engine/state.ts';
 import { ChoosePanel } from './ChoosePanel.tsx';
+import { DeckStrip, LootShelf } from './DeckStrip.tsx';
 import { FightPanel } from './FightPanel.tsx';
 import { RulesSheet } from './RulesSheet.tsx';
-import { StatusBar } from './StatusBar.tsx';
 import { randomSeed, useGameSession, type Session } from './useGameSession.ts';
 
 export function App() {
@@ -13,24 +14,39 @@ export function App() {
 
   return (
     <div className="app">
-      <header className="header">
-        <h1>Enemy in My Dreams</h1>
+      <header className="masthead">
+        <h1 className="masthead__title">Enemy in My Dreams</h1>
         <Menu session={session} onNewGame={newGame} onOpenRules={() => setIsRulesOpen(true)} />
       </header>
-      <StatusBar state={state} />
-      {state.phase.kind === 'choose' && <ChoosePanel key={state.turn} state={state} onMove={play} />}
-      {state.phase.kind === 'fight' && <FightPanel state={state} fight={state.phase.fight} onMove={play} />}
-      {state.phase.kind === 'over' && (
-        <section className="panel panel--over">
-          <h2>{state.phase.outcome === 'won' ? 'You wake up. Victory.' : 'The dream takes you.'}</h2>
-          <button type="button" className="primary" onClick={() => newGame(randomSeed(), session.variantId)}>
-            Play again
-          </button>
-        </section>
-      )}
-      <GameLog lines={session.log} />
+      <div className="layout">
+        <main className="layout__main">
+          <DeckStrip state={state} />
+          <LootShelf state={state} />
+          {state.phase.kind === 'choose' && <ChoosePanel key={state.turn} state={state} onMove={play} />}
+          {state.phase.kind === 'fight' && <FightPanel state={state} fight={state.phase.fight} onMove={play} />}
+          {state.phase.kind === 'over' && <GameOver state={state} onPlayAgain={() => newGame(randomSeed(), session.variantId)} />}
+        </main>
+        <GameLog lines={session.log} />
+      </div>
       {isRulesOpen && <RulesSheet rules={state.rules} onClose={() => setIsRulesOpen(false)} />}
     </div>
+  );
+}
+
+function GameOver({ state, onPlayAgain }: { state: GameState; onPlayAgain: () => void }) {
+  const isWon = state.phase.kind === 'over' && state.phase.outcome === 'won';
+  return (
+    <section className="table game-over">
+      <h2 className="game-over__title">{isWon ? 'You wake up.' : 'The dream takes you.'}</h2>
+      <p>
+        {isWon
+          ? `You defeated The Dreamer on turn ${state.turn} with ${deckSize(state)} cards of health left.`
+          : `Your deck ran out on turn ${state.turn}.`}
+      </p>
+      <button type="button" className="button--primary" onClick={onPlayAgain}>
+        Play again
+      </button>
+    </section>
   );
 }
 
@@ -48,58 +64,75 @@ function Menu({ session, onNewGame, onOpenRules }: MenuProps) {
   async function copyLog() {
     try {
       await navigator.clipboard.writeText(session.log.join('\n'));
-      setCopyStatus('Copied');
+      setCopyStatus('Log copied');
     } catch (error) {
       console.error('Copying the log failed', error);
-      setCopyStatus('Copy failed: select the log text instead');
+      setCopyStatus('Copy failed. Select the log text and copy it by hand.');
     }
   }
 
   return (
-    <div className="menu">
+    <nav className="menu" aria-label="Game menu">
       <button type="button" onClick={onOpenRules}>
         Rules
-      </button>
-      <label>
-        Rules variant{' '}
-        <select value={variantId} onChange={(event) => setVariantId(event.target.value)}>
-          {MAIN_VARIANT_IDS.map((id) => (
-            <option key={id} value={id}>
-              {id}
-              {id === RECOMMENDED_VARIANT_ID ? ' (recommended)' : ''}
-            </option>
-          ))}
-        </select>
-      </label>
-      <input
-        aria-label="Game number (optional)"
-        placeholder="game #"
-        inputMode="numeric"
-        value={seedText}
-        onChange={(event) => setSeedText(event.target.value.replace(/\D/g, ''))}
-      />
-      <button type="button" onClick={() => onNewGame(seedText ? Number(seedText) : randomSeed(), variantFor(variantId).id)}>
-        New game
       </button>
       <button type="button" onClick={copyLog}>
         Copy log
       </button>
-      {copyStatus && <span className="muted">{copyStatus}</span>}
-    </div>
+      <details className="menu__new">
+        <summary>New game</summary>
+        <div className="menu__panel">
+          <label>
+            Rules
+            <select value={variantId} onChange={(event) => setVariantId(event.target.value)}>
+              {MAIN_VARIANT_IDS.map((id) => (
+                <option key={id} value={id}>
+                  {id}
+                  {id === RECOMMENDED_VARIANT_ID ? ' (recommended)' : ''}
+                </option>
+              ))}
+            </select>
+          </label>
+          <label>
+            Game number
+            <input
+              placeholder="random"
+              inputMode="numeric"
+              value={seedText}
+              onChange={(event) => setSeedText(event.target.value.replace(/\D/g, ''))}
+            />
+          </label>
+          <button type="button" className="button--primary" onClick={() => onNewGame(seedText ? Number(seedText) : randomSeed(), variantFor(variantId).id)}>
+            Start new game
+          </button>
+          <p className="menu__current">
+            Playing game {session.seed} with rules {session.variantId}.
+          </p>
+        </div>
+      </details>
+      {copyStatus && (
+        <span className="menu__status" role="status">
+          {copyStatus}
+        </span>
+      )}
+    </nav>
   );
 }
 
 function GameLog({ lines }: { lines: readonly string[] }) {
-  const endRef = useRef<HTMLDivElement>(null);
+  const endRef = useRef<HTMLLIElement>(null);
   useEffect(() => endRef.current?.scrollIntoView({ block: 'nearest' }), [lines.length]);
   return (
-    <section className="log" aria-label="Game log">
-      {lines.map((line, index) => (
-        <div key={index} className={line.startsWith('—') ? 'log__turn' : undefined}>
-          {line}
-        </div>
-      ))}
-      <div ref={endRef} />
-    </section>
+    <aside className="log" aria-label="Game log">
+      <h2 className="log__title">What happened</h2>
+      <ol className="log__lines">
+        {lines.map((line, index) => (
+          <li key={index} className={line.startsWith('Turn ') ? 'log__turn' : undefined}>
+            {line}
+          </li>
+        ))}
+        <li ref={endRef} aria-hidden="true" />
+      </ol>
+    </aside>
   );
 }
