@@ -1,0 +1,390 @@
+{
+  "setVersion": "v3",
+  "games": 600,
+  "results": {
+    "A>": {
+      "naive": {
+        "games": 600,
+        "winRate": 0.008333333333333333,
+        "stallRate": 0,
+        "meanTurns": 56.565,
+        "meanTurnsWon": 60.8,
+        "meanTurnsLost": 56.529411764705884,
+        "earlyEliminationRate": 0.04833333333333333,
+        "deckCurve": [
+          24,
+          21,
+          17.631666666666668,
+          14.276666666666667,
+          10
+        ],
+        "damageByQuarter": [
+          0.3051032475211498,
+          0.22972800873282997,
+          0.20211043391248976,
+          0.2630583098335304
+        ],
+        "earlyDamageWinGap": 0,
+        "boss": {
+          "chosenShare": 0,
+          "firstChosenTurn": null,
+          "firstChosenDeckSize": null,
+          "attemptsPerGame": 4.351666666666667,
+          "winPerAttempt": 0.0019149751053236309,
+          "forcedPerGame": 4.351666666666667,
+          "forcedWinShare": 1
+        },
+        "flips": {
+          "perGame": 0,
+          "wonShare": null,
+          "automissShare": null,
+          "stoppedShortShare": null
+        }
+      },
+      "greedy": {
+        "games": 600,
+        "winRate": 0.475,
+        "stallRate": 0,
+        "meanTurns": 39.71,
+        "meanTurnsWon": 34.63859649122807,
+        "meanTurnsLost": 44.2984126984127,
+        "earlyEliminationRate": 0,
+        "deckCurve": [
+          24,
+          20.695,
+          16.845,
+          13.045,
+          7.636666666666667
+        ],
+        "damageByQuarter": [
+          0.4516726902048003,
+          0.23672504865165417,
+          0.14785469372625337,
+          0.16374756741729218
+        ],
+        "earlyDamageWinGap": 0.10499999999999998,
+        "boss": {
+          "chosenShare": 0.835,
+          "firstChosenTurn": 17.702594810379242,
+          "firstChosenDeckSize": 18.261477045908183,
+          "attemptsPerGame": 2.7883333333333336,
+          "winPerAttempt": 0.17035265989240886,
+          "forcedPerGame": 1.4,
+          "forcedWinShare": 0.03859649122807018
+        },
+        "flips": {
+          "perGame": 13.505,
+          "wonShare": 0.6660682226211849,
+          "automissShare": 0.158968500081606,
+          "stoppedShortShare": 0.17496327729720906
+        }
+      },
+      "boss-rusher": {
+        "games": 600,
+        "winRate": 0.6316666666666667,
+        "stallRate": 0,
+        "meanTurns": 29.383333333333333,
+        "meanTurnsWon": 27.348284960422163,
+        "meanTurnsLost": 32.873303167420815,
+        "earlyEliminationRate": 0.04,
+        "deckCurve": [
+          24,
+          21.541666666666668,
+          18.69,
+          15.9,
+          12.273333333333333
+        ],
+        "damageByQuarter": [
+          0.3920199755401549,
+          0.25881573583367307,
+          0.17631471667346107,
+          0.17284957195271097
+        ],
+        "earlyDamageWinGap": 0.17500000000000004,
+        "boss": {
+          "chosenShare": 0.8833333333333333,
+          "firstChosenTurn": 13.986792452830189,
+          "firstChosenDeckSize": 19.252830188679244,
+          "attemptsPerGame": 2.54,
+          "winPerAttempt": 0.24868766404199474,
+          "forcedPerGame": 0.905,
+          "forcedWinShare": 0.20580474934036938
+        },
+        "flips": {
+          "perGame": 20.648333333333333,
+          "wonShare": 0.5484370164035902,
+          "automissShare": 0.28675332714329926,
+          "stoppedShortShare": 0.1648096564531105
+        }
+      },
+      "hoarder": {
+        "games": 600,
+        "winRate": 0.41833333333333333,
+        "stallRate": 0,
+        "meanTurns": 23.461666666666666,
+        "meanTurnsWon": 20.800796812749002,
+        "meanTurnsLost": 25.375358166189113,
+        "earlyEliminationRate": 0.018333333333333333,
+        "deckCurve": [
+          24,
+          21.758333333333333,
+          18.516666666666666,
+          15.221666666666666,
+          11.345
+        ],
+        "damageByQuarter": [
+          0.24270902100889286,
+          0.22403013475204847,
+          0.23148615587744165,
+          0.301774688361617
+        ],
+        "earlyDamageWinGap": 0.08999999999999997,
+        "boss": {
+          "chosenShare": 0.975,
+          "firstChosenTurn": 9.304273504273505,
+          "firstChosenDeckSize": 20.545299145299147,
+          "attemptsPerGame": 2.8866666666666667,
+          "winPerAttempt": 0.14491916859122403,
+          "forcedPerGame": 0.19833333333333333,
+          "forcedWinShare": 0.11952191235059761
+        },
+        "flips": {
+          "perGame": 20.60333333333333,
+          "wonShare": 0.49313186813186816,
+          "automissShare": 0.2940934065934066,
+          "stoppedShortShare": 0.21277472527472527
+        }
+      },
+      "smart": {
+        "games": 600,
+        "winRate": 0.42333333333333334,
+        "stallRate": 0,
+        "meanTurns": 33.985,
+        "meanTurnsWon": 26.003937007874015,
+        "meanTurnsLost": 39.84393063583815,
+        "earlyEliminationRate": 0.01,
+        "deckCurve": [
+          24,
+          20.991666666666667,
+          17.41,
+          13.346666666666666,
+          8.336666666666666
+        ],
+        "damageByQuarter": [
+          0.42991083739314273,
+          0.2346723044397463,
+          0.12730949535802924,
+          0.2081073628090817
+        ],
+        "earlyDamageWinGap": 0.10500000000000004,
+        "boss": {
+          "chosenShare": 0.7,
+          "firstChosenTurn": 29.428571428571427,
+          "firstChosenDeckSize": 11.026190476190477,
+          "attemptsPerGame": 1.18,
+          "winPerAttempt": 0.3587570621468927,
+          "forcedPerGame": 0.3616666666666667,
+          "forcedWinShare": 0.07874015748031496
+        },
+        "flips": {
+          "perGame": 16.356666666666666,
+          "wonShare": 0.6996486036619197,
+          "automissShare": 0.1891991862400592,
+          "stoppedShortShare": 0.11115221009802108
+        }
+      }
+    },
+    "A>+stakes": {
+      "naive": {
+        "games": 600,
+        "winRate": 0.008333333333333333,
+        "stallRate": 0,
+        "meanTurns": 56.565,
+        "meanTurnsWon": 60.8,
+        "meanTurnsLost": 56.529411764705884,
+        "earlyEliminationRate": 0.04833333333333333,
+        "deckCurve": [
+          24,
+          21,
+          17.631666666666668,
+          14.276666666666667,
+          10
+        ],
+        "damageByQuarter": [
+          0.3051032475211498,
+          0.22972800873282997,
+          0.20211043391248976,
+          0.2630583098335304
+        ],
+        "earlyDamageWinGap": 0,
+        "boss": {
+          "chosenShare": 0,
+          "firstChosenTurn": null,
+          "firstChosenDeckSize": null,
+          "attemptsPerGame": 4.351666666666667,
+          "winPerAttempt": 0.0019149751053236309,
+          "forcedPerGame": 4.351666666666667,
+          "forcedWinShare": 1
+        },
+        "flips": {
+          "perGame": 0,
+          "wonShare": null,
+          "automissShare": null,
+          "stoppedShortShare": null
+        }
+      },
+      "greedy": {
+        "games": 600,
+        "winRate": 0.25166666666666665,
+        "stallRate": 0,
+        "meanTurns": 35.093333333333334,
+        "meanTurnsWon": 32.019867549668874,
+        "meanTurnsLost": 36.12694877505568,
+        "earlyEliminationRate": 0.013333333333333334,
+        "deckCurve": [
+          24,
+          19.991666666666667,
+          16.083333333333332,
+          12.673333333333334,
+          7.995
+        ],
+        "damageByQuarter": [
+          0.3765176900648418,
+          0.2181121893903129,
+          0.16710909961268985,
+          0.23826102093215545
+        ],
+        "earlyDamageWinGap": 0.14500000000000002,
+        "boss": {
+          "chosenShare": 0.7383333333333333,
+          "firstChosenTurn": 14.977426636568849,
+          "firstChosenDeckSize": 18.205417607223477,
+          "attemptsPerGame": 2.645,
+          "winPerAttempt": 0.09514807813484562,
+          "forcedPerGame": 1.4533333333333334,
+          "forcedWinShare": 0.039735099337748346
+        },
+        "flips": {
+          "perGame": 12.691666666666666,
+          "wonShare": 0.6784604763548499,
+          "automissShare": 0.17259233690024162,
+          "stoppedShortShare": 0.14894718674490853
+        }
+      },
+      "boss-rusher": {
+        "games": 600,
+        "winRate": 0.31333333333333335,
+        "stallRate": 0,
+        "meanTurns": 20.341666666666665,
+        "meanTurnsWon": 21.02127659574468,
+        "meanTurnsLost": 20.031553398058254,
+        "earlyEliminationRate": 0.15666666666666668,
+        "deckCurve": [
+          24,
+          21.191666666666666,
+          18.04,
+          15.093333333333334,
+          11.735
+        ],
+        "damageByQuarter": [
+          0.28924026224450444,
+          0.22020825298881605,
+          0.18880502451655556,
+          0.30174646025012397
+        ],
+        "earlyDamageWinGap": 0.24999999999999997,
+        "boss": {
+          "chosenShare": 0.7833333333333333,
+          "firstChosenTurn": 11.117021276595745,
+          "firstChosenDeckSize": 19.07659574468085,
+          "attemptsPerGame": 1.9616666666666667,
+          "winPerAttempt": 0.15972812234494477,
+          "forcedPerGame": 0.775,
+          "forcedWinShare": 0.34574468085106386
+        },
+        "flips": {
+          "perGame": 15.136666666666667,
+          "wonShare": 0.5291666666666667,
+          "automissShare": 0.31,
+          "stoppedShortShare": 0.16083333333333333
+        }
+      },
+      "hoarder": {
+        "games": 600,
+        "winRate": 0.17,
+        "stallRate": 0,
+        "meanTurns": 16.19333333333333,
+        "meanTurnsWon": 15.77450980392157,
+        "meanTurnsLost": 16.279116465863453,
+        "earlyEliminationRate": 0.056666666666666664,
+        "deckCurve": [
+          24,
+          21.743333333333332,
+          18.116666666666667,
+          14.953333333333333,
+          11.476666666666667
+        ],
+        "damageByQuarter": [
+          0.17328763817154993,
+          0.23096973500024134,
+          0.22614278129072743,
+          0.3695998455374813
+        ],
+        "earlyDamageWinGap": 0.14500000000000002,
+        "boss": {
+          "chosenShare": 0.955,
+          "firstChosenTurn": 8.591623036649215,
+          "firstChosenDeckSize": 19.033158813263526,
+          "attemptsPerGame": 2.118333333333333,
+          "winPerAttempt": 0.08025177025963807,
+          "forcedPerGame": 0.17166666666666666,
+          "forcedWinShare": 0.20588235294117646
+        },
+        "flips": {
+          "perGame": 14.498333333333333,
+          "wonShare": 0.472454740120693,
+          "automissShare": 0.3038738563363831,
+          "stoppedShortShare": 0.2236714035429239
+        }
+      },
+      "smart": {
+        "games": 600,
+        "winRate": 0.34833333333333333,
+        "stallRate": 0,
+        "meanTurns": 30.113333333333333,
+        "meanTurnsWon": 23.358851674641148,
+        "meanTurnsLost": 33.72378516624041,
+        "earlyEliminationRate": 0.015,
+        "deckCurve": [
+          24,
+          20.493333333333332,
+          16.733333333333334,
+          12.993333333333334,
+          8.353333333333333
+        ],
+        "damageByQuarter": [
+          0.37073726659068995,
+          0.20566318926974664,
+          0.14210572455509773,
+          0.2814938195844657
+        ],
+        "earlyDamageWinGap": 0.13,
+        "boss": {
+          "chosenShare": 0.5833333333333334,
+          "firstChosenTurn": 26.60857142857143,
+          "firstChosenDeckSize": 10.817142857142857,
+          "attemptsPerGame": 0.9933333333333333,
+          "winPerAttempt": 0.35067114093959734,
+          "forcedPerGame": 0.3383333333333333,
+          "forcedWinShare": 0.10047846889952153
+        },
+        "flips": {
+          "perGame": 15.548333333333334,
+          "wonShare": 0.6959499119546078,
+          "automissShare": 0.19213461162199177,
+          "stoppedShortShare": 0.11191547642340051
+        }
+      }
+    }
+  }
+}
