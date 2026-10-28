@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
-import { MAIN_VARIANT_IDS, RECOMMENDED_VARIANT_ID, variantFor } from '../engine/rules.ts';
+import { PLAYABLE_VARIANT_IDS, RECOMMENDED_VARIANT_ID, variantFor } from '../engine/rules.ts';
 import { deckSize, type GameState } from '../engine/state.ts';
 import { ChoosePanel } from './ChoosePanel.tsx';
 import { DeckStrip, LootShelf } from './DeckStrip.tsx';
@@ -85,7 +85,7 @@ function Menu({ session, onNewGame, onOpenRules }: MenuProps) {
           <label>
             Rules
             <select value={variantId} onChange={(event) => setVariantId(event.target.value)}>
-              {MAIN_VARIANT_IDS.map((id) => (
+              {PLAYABLE_VARIANT_IDS.map((id) => (
                 <option key={id} value={id}>
                   {id}
                   {id === RECOMMENDED_VARIANT_ID ? ' (recommended)' : ''}

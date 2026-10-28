@@ -110,6 +110,17 @@ Lamplighter 3/5 → permanent +1; Bell Tower 4/6 item +4; Pale Hand harder (3/4)
 
 Set-by-set on the same bots and rules: `sims/progression.log`.
 
+### v7: the flip-only turn (Turn C)
+Rule change from the designer: no attack card. Pick a card to fight; the others stay in hand; flip; draw 1.
+v6 under Turn C: Smart 3 %. Bots' flip thresholds were absolute points ("flip when ≤ 2 short"), which never
+fires when every fight starts from zero; they are now in average flips ("about two cards short").
+
+v7: attack values up (mean about +1.8 over the non-automiss cards), defenses 2–3 / 4–5 / 6–8 / 9–10, automiss value 0, boss 4/16 Devour.
+C>+stakes: Naive 0 %, Greedy 2 %, Cautious 0 %, Rusher 18 %, Hoarder 12 %, Smart 31 % (`sims/v7-turn-c.log`).
+Smart chase sweep (boss 4/16): 0 → 25 %, 3 → 31 %, 5 → **35 %**, 8 → 32 %, always → 31 %.
+Open problem: wins come early (turn ~11) and mostly from forced boss fights. A probe with 5 automiss cards
+dropped Smart to 17 % without fixing the timing.
+
 ## v6 against the design goals (A>+stakes)
 
 **Win rate and skill.** Smart 35 %, Naive 3 %. The middle bots sit at 14–24 %, so judgement pays.

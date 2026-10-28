@@ -1,7 +1,8 @@
 import type { Card, Loot } from '../engine/cards.ts';
 import { legalMoves } from '../engine/game.ts';
 import type { Random } from '../engine/rng.ts';
-import { cardOf, damageFrom, deckSize, neededToDefeat, permanentAttackBonus, type GameState, type Move } from '../engine/state.ts';
+import { cardsDrawnPerTurn } from '../engine/rules.ts';
+import { cardOf, damageFrom, deckSize, handAttack, neededToDefeat, permanentAttackBonus, type GameState, type Move } from '../engine/state.ts';
 
 /** What a bot looks at when deciding whether to flip one more card. */
 export interface FlipContext {
@@ -107,14 +108,13 @@ export function engagementOptions(state: GameState): Option[] {
     const encounter = cardOf(state, move.encounterId);
     const attackCard = move.attackCardId === null ? null : cardOf(state, move.attackCardId);
     const kept = state.hand.filter((id) => id !== move.encounterId && id !== move.attackCardId).map((id) => cardOf(state, id));
-    const cardAttack = state.rules.turnStyle === 'A' ? (attackCard?.modifier ?? 0) : kept.reduce((sum, entry) => sum + entry.modifier, 0);
     return [
       {
         move,
         encounter,
         attackCard,
         kept,
-        attack: cardAttack + permanentAttackBonus(state),
+        attack: handAttack(state, encounter.id, move.attackCardId) + permanentAttackBonus(state),
         needed: neededToDefeat(state, encounter.id),
         damageIfLost: damageFrom(state, encounter.id),
       },
@@ -126,14 +126,9 @@ export function itemAttackTotal(items: readonly Card[]): number {
   return items.reduce((sum, item) => sum + (item.loot.kind === 'itemAttack' ? item.loot.bonus : 0), 0);
 }
 
-/** Cards drawn at the end of a turn: the reshuffle comes when the draw pile can't cover this. */
-export function cardsDrawnPerTurn(state: GameState): number {
-  return state.rules.turnStyle === 'A' ? 2 : 1;
-}
-
 /** The next reshuffle will probably happen before this bot's next turn starts. */
 export function isReshuffleNear(state: GameState): boolean {
-  return state.drawPile.length <= cardsDrawnPerTurn(state) + 2;
+  return state.drawPile.length <= cardsDrawnPerTurn(state.rules) + 2;
 }
 
 /** Health remaining, as a 0–1 pressure gauge: 1 when the deck is nearly gone. */

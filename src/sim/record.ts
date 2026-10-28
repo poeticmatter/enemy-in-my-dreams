@@ -99,7 +99,8 @@ class GameRecorder {
   }
 
   private recordRoles(before: GameState, move: Extract<Move, { kind: 'engage' }>): void {
-    const keptRole = before.rules.turnStyle === 'A' ? 'kept' : 'contributed';
+    // Turn C cards left in hand add nothing, so they count as kept, like Turn A's third card.
+    const keptRole = before.rules.turnStyle === 'B' ? 'contributed' : 'kept';
     for (const id of before.hand) {
       const use = this.cardUse[id];
       use.inHand += 1;

@@ -198,6 +198,20 @@ describe('Turn B', () => {
   });
 });
 
+describe('Turn C', () => {
+  it('attacks with flips alone and keeps the other cards in hand', () => {
+    const start = stateWith({ hand: ['plus-two', 'plus-three', 'weak'], drawPile: ['strong', 'boss'] }, 'C>');
+    const { state, events } = play(start, engage('weak'), FLIP, RESOLVE);
+    expect(events.find((event) => event.kind === 'fightResolved')).toMatchObject({ total: 5, isWin: true });
+    expect(state.hand).toEqual(['plus-two', 'plus-three', 'boss']);
+  });
+
+  it('rejects an attack card', () => {
+    const start = stateWith({ hand: ['plus-two', 'plus-three', 'weak'], drawPile: ['strong', 'boss'] }, 'C>');
+    expect(() => applyMove(start, engage('weak', 'plus-two'))).toThrow(IllegalMoveError);
+  });
+});
+
 describe('the boss', () => {
   it('ends the game in a win when defeated', () => {
     const start = stateWith({ hand: ['boss', 'strong', 'weak'], drawPile: ['plus-three', 'plus-two'], inventory: ['trap'] });

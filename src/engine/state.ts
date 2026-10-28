@@ -113,6 +113,21 @@ export function fightTotal(state: GameState, fight: Fight): number {
   return fight.cardAttack + fight.flipTotal + fight.itemAttack + permanentAttackBonus(state);
 }
 
+/**
+ * Attack the cards in hand give before flips, items and loot: the attack card (Turn A),
+ * every other card in hand (Turn B), or nothing (Turn C).
+ */
+export function handAttack(state: GameState, encounterId: string, attackCardId: string | null): number {
+  switch (state.rules.turnStyle) {
+    case 'A':
+      return attackCardId === null ? 0 : cardOf(state, attackCardId).modifier;
+    case 'B':
+      return state.hand.filter((id) => id !== encounterId).reduce((sum, id) => sum + cardOf(state, id).modifier, 0);
+    case 'C':
+      return 0;
+  }
+}
+
 export function neededToDefeat(state: GameState, cardId: string): number {
   return attackNeeded(cardOf(state, cardId).enemy.defense, state.rules);
 }

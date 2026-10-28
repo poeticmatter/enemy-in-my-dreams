@@ -3,7 +3,7 @@ import { hitText, keywordsOf, lootText, signed } from './cardText.ts';
 import { AttackIcon, HitIcon, LootIcon, ShieldIcon } from './icons.tsx';
 
 /** Which part of the card matters for the choice being made; the other parts fade back. */
-export type CardFocus = 'enemy' | 'attack' | null;
+export type CardFocus = 'enemy' | null;
 
 interface CardViewProps {
   card: Card;
@@ -16,13 +16,16 @@ interface CardViewProps {
  * the enemy you fight, and the loot you win. Each job gets its own band and colour.
  */
 export function CardView({ card, focus = null, isLarge = false }: CardViewProps) {
-  const classes = ['card', isLarge && 'card--large', card.isBoss && 'card--boss', focus && `card--focus-${focus}`].filter(Boolean).join(' ');
+  // Flipping an automiss card fails the attack, so its attack value is "Miss", not a number.
+  const classes = ['card', isLarge && 'card--large', card.isBoss && 'card--boss', card.isAutomiss && 'card--missed', focus && `card--focus-${focus}`]
+    .filter(Boolean)
+    .join(' ');
   return (
     <article className={classes} aria-label={describeCard(card)}>
       <header className="card__top">
         <span className={`card__attack${card.modifier < 0 ? ' card__attack--negative' : ''}`}>
           <AttackIcon />
-          {signed(card.modifier)}
+          {card.isAutomiss ? 'Miss' : signed(card.modifier)}
         </span>
         <h3 className="card__name">{card.name}</h3>
       </header>
@@ -53,15 +56,5 @@ export function CardView({ card, focus = null, isLarge = false }: CardViewProps)
 }
 
 function describeCard(card: Card): string {
-  return `${card.name}: attack ${signed(card.modifier)}, enemy defense ${card.enemy.defense}, if you lose ${hitText(card)}, win ${lootText(card.loot)}`;
-}
-
-/** A flipped card, shown small: its attack value or the automiss that ended the attack. */
-export function FlippedCard({ card }: { card: Card }) {
-  return (
-    <span className={`flipped-card${card.isAutomiss ? ' flipped-card--automiss' : ''}`}>
-      <span className="flipped-card__value">{card.isAutomiss ? 'Miss' : signed(card.modifier)}</span>
-      <span className="flipped-card__name">{card.name}</span>
-    </span>
-  );
+  return `${card.name}: attack ${card.isAutomiss ? 'miss' : signed(card.modifier)}, enemy defense ${card.enemy.defense}, if you lose ${hitText(card)}, win ${lootText(card.loot)}`;
 }

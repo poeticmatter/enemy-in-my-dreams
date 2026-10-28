@@ -1,8 +1,9 @@
 /**
  * Turn A: fight one card, discard another for its modifier, keep the third, draw 2.
  * Turn B: fight one card; the other two add their modifiers and stay in hand; draw 1.
+ * Turn C: fight one card; the others stay in hand and add nothing, so all your attack comes from flips and loot; draw 1.
  */
-export type TurnStyle = 'A' | 'B';
+export type TurnStyle = 'A' | 'B' | 'C';
 
 /** `beat`: attack must exceed Defense. `match`: equalling it is enough. */
 export type WinThreshold = 'beat' | 'match';
@@ -51,7 +52,7 @@ function withStakes(base: RulesVariant): RulesVariant {
   return { ...base, id: `${base.id}+stakes`, lostFlipsAreRemoved: true };
 }
 
-const MAIN_VARIANTS = [variant('A', 'beat'), variant('A', 'match'), variant('B', 'beat'), variant('B', 'match')];
+const MAIN_VARIANTS = (['A', 'B', 'C'] as const).flatMap((turnStyle) => [variant(turnStyle, 'beat'), variant(turnStyle, 'match')]);
 
 export const VARIANTS: Record<string, RulesVariant> = Object.fromEntries(
   [...MAIN_VARIANTS, ...MAIN_VARIANTS.map(withLiteralDamage), ...MAIN_VARIANTS.map(withStakes)].map((entry) => [entry.id, entry]),
@@ -61,7 +62,15 @@ export const VARIANTS: Record<string, RulesVariant> = Object.fromEntries(
 export const MAIN_VARIANT_IDS: readonly string[] = [...MAIN_VARIANTS, ...MAIN_VARIANTS.map(withStakes)].map((entry) => entry.id);
 
 /** The variant the playable UI starts with. */
-export const RECOMMENDED_VARIANT_ID = 'A>+stakes';
+export const RECOMMENDED_VARIANT_ID = 'C>+stakes';
+
+/** The variants the playable UI offers: flip-only turns. */
+export const PLAYABLE_VARIANT_IDS: readonly string[] = MAIN_VARIANT_IDS.filter((id) => id.startsWith('C'));
+
+/** Cards drawn at the end of a normal turn; a reshuffle comes when the draw pile can't cover them. */
+export function cardsDrawnPerTurn(rules: RulesVariant): number {
+  return rules.turnStyle === 'A' ? 2 : 1;
+}
 
 export function variantFor(id: string): RulesVariant {
   const found = VARIANTS[id];

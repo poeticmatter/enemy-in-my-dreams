@@ -1,5 +1,31 @@
 # Enemy in My Dreams: balance report
 
+## Update: the flip-only turn (Turn C) and card set v7
+
+You dropped the attack card: pick a card to fight, then flip. All your attack now comes from flips, loot and items.
+The playable build uses Turn C, attack > Defense, with Stakes, and card set **v7**.
+
+| C>+stakes, 2000 games each | naive | greedy | cautious | boss-rusher | hoarder | smart |
+|---|---|---|---|---|---|---|
+| v6 (tuned for Turn A) | 0 % | 0 % | 0 % | 2 % | 1 % | 3 % |
+| v7 | 0 % | 2 % | 0 % | 18 % | 12 % | **31 %** |
+
+- **v6 is unwinnable here.** Its defenses assumed a +2 to +5 attack card every fight.
+- **v7** raises attack values (they're the whole attack now), scales defenses to flips, and gives automiss
+  cards no attack value (flipped, they just miss). Smart wins 31 % (38 % without Stakes).
+- **Flipping is push-your-luck.** Flipping up to about 5 average cards short is best (35 %); never flipping
+  gives 25 % and always flipping gives 31 %.
+- **The arc is off.** Wins come early (about turn 11, with ~20 cards of health left), and most of them
+  (63 % for Smart) come from forced boss fights: the boss is in hand at a reshuffle, you flip all in, and a
+  lucky run wins. Loot barely matters, and enemies above Defense 5 are rarely worth fighting. With only 3
+  automiss cards, a 7–8 card flip run is too reachable. Adding 2 more automiss cards made it worse (Smart 17 %).
+- **Timid bots can't win** (Greedy 2 %, Cautious 0 %): every fight starts from zero, so "flip only when a card
+  or two short" means rarely fighting at all. That's partly the bots, partly a sign the turn is all-or-nothing.
+
+This turn needs its own design pass: likely a boss that loot must make reachable, and a reason to fight
+strong enemies. The rest of this report is about Turn A and v6.
+
+
 Card set **v6** (24 cards), recommended rules **Turn A, attack > Defense, plus two proposed rules (Stakes, Devour)**.
 Details and every number's source: [DESIGN_JOURNAL.md](DESIGN_JOURNAL.md). Rules and defaults: [RULES.md](RULES.md).
 

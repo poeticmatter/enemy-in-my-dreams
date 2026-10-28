@@ -11,7 +11,7 @@ import {
   type Move,
 } from '../engine/state.ts';
 import { damageText, itemEffectText, signed } from './cardText.ts';
-import { CardView, FlippedCard } from './CardView.tsx';
+import { CardView } from './CardView.tsx';
 
 interface FightPanelProps {
   state: GameState;
@@ -32,6 +32,7 @@ export function FightPanel({ state, fight, onMove }: FightPanelProps) {
       </h2>
       <div className="arena">
         <CardView card={encounter} focus="enemy" isLarge />
+        <FlipStack state={state} fight={fight} />
         <div className="arena__side">
           <Tally state={state} fight={fight} />
           <DrawPile state={state} isDisabled={fight.hasAutomissed || isWinning} onFlip={() => onMove({ kind: 'flip' })} />
@@ -58,18 +59,11 @@ function Tally({ state, fight }: { state: GameState; fight: Fight }) {
   return (
     <div className="tally">
       <dl className="tally__lines">
-        <TallyLine label={cardAttackLabel(state, fight)} value={fight.cardAttack} />
+        {fight.cardAttack !== 0 && <TallyLine label={cardAttackLabel(state)} value={fight.cardAttack} />}
         {permanent > 0 && <TallyLine label="Loot, every fight" value={permanent} />}
         {fight.itemAttack > 0 && <TallyLine label="Items" value={fight.itemAttack} />}
-        {fight.flippedIds.length > 0 && <TallyLine label="Flips" value={fight.flipTotal} />}
+        <TallyLine label={`Flips (${fight.flippedIds.length})`} value={fight.flipTotal} />
       </dl>
-      {fight.flippedIds.length > 0 && (
-        <div className="tally__flips">
-          {fight.flippedIds.map((id) => (
-            <FlippedCard key={id} card={cardOf(state, id)} />
-          ))}
-        </div>
-      )}
       <div className={`meter meter--${outcome}`}>
         <div className="meter__fill" style={{ width: `${fill * 100}%` }} />
         <span className="meter__text">
@@ -92,9 +86,36 @@ function TallyLine({ label, value }: { label: string; value: number }) {
   );
 }
 
-function cardAttackLabel(state: GameState, fight: Fight): string {
-  if (fight.isForced) return 'No attack card';
+function cardAttackLabel(state: GameState): string {
   return state.rules.turnStyle === 'A' ? 'Attack card' : 'Cards in hand';
+}
+
+/**
+ * Flipped cards, dealt downward like a fanned column: each earlier card shows only its top band
+ * (name and attack value), and the newest one shows in full.
+ */
+function FlipStack({ state, fight }: { state: GameState; fight: Fight }) {
+  if (fight.flippedIds.length === 0) {
+    return (
+      <div className="flip-stack flip-stack--empty">
+        <p>Cards you flip land here.</p>
+      </div>
+    );
+  }
+  const lastIndex = fight.flippedIds.length - 1;
+  return (
+    <ol className="flip-stack" aria-label="Flipped cards">
+      {fight.flippedIds.map((id, index) => {
+        const card = cardOf(state, id);
+        const isLast = index === lastIndex;
+        return (
+          <li key={id} className={`flip-stack__item${isLast ? ' flip-stack__item--last' : ''}`} style={{ zIndex: index + 1 }}>
+            <CardView card={card} />
+          </li>
+        );
+      })}
+    </ol>
+  );
 }
 
 /** The face-down draw pile is the flip button: what you see is what you flip from. */

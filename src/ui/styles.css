@@ -17,6 +17,9 @@
   --moonlight: #9db8f0;
   --discarded: #5a6592;
 
+  /* Height of a card's top band (attack value and name): what a stacked flipped card shows. */
+  --card-top-height: 3.6rem;
+
   --font-text: 'Atkinson Hyperlegible', system-ui, sans-serif;
   --font-display: 'Gloock', Georgia, serif;
 
@@ -337,7 +340,10 @@ input {
   display: flex;
   align-items: center;
   gap: 10px;
-  padding: 10px 12px;
+  /* A fixed height, so a stacked flipped card shows exactly this band. */
+  height: var(--card-top-height);
+  flex: none;
+  padding: 0 12px;
 }
 
 .card__attack {
@@ -362,6 +368,10 @@ input {
 }
 
 .card__name {
+  display: -webkit-box;
+  overflow: hidden;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
   font-family: var(--font-display);
   font-weight: 400;
   font-size: 1.12rem;
@@ -463,16 +473,6 @@ input {
   opacity: 0.75;
 }
 
-.card--focus-attack .card__enemy,
-.card--focus-attack .card__loot,
-.card--focus-attack .card__keyword {
-  opacity: 0.45;
-}
-
-.card--focus-attack .card__top {
-  box-shadow: inset 0 0 0 3px var(--moonlight);
-}
-
 /* Hand */
 
 .hand {
@@ -499,36 +499,12 @@ input {
   color: #f08a96;
 }
 
-.hand__slot--attack .hand__role,
-.hand__slot--helps .hand__role {
-  color: var(--moonlight);
-}
-
 .hand__slot--fight .card {
   box-shadow: 0 0 0 3px var(--wound);
 }
 
-.hand__slot--attack .card {
-  box-shadow: 0 0 0 3px var(--moonlight);
-}
-
-.hand__slot--kept .card {
-  opacity: 0.6;
-}
-
 .hand__slot .card {
   flex: 1;
-}
-
-.hand__buttons {
-  display: grid;
-  grid-auto-flow: column;
-  grid-auto-columns: 1fr;
-  gap: 6px;
-}
-
-.hand__buttons button {
-  padding: 9px 6px;
 }
 
 .commit {
@@ -548,7 +524,7 @@ input {
 
 .arena {
   display: grid;
-  grid-template-columns: minmax(200px, 260px) minmax(0, 1fr);
+  grid-template-columns: minmax(190px, 250px) minmax(170px, 230px) minmax(0, 1fr);
   gap: 28px;
   align-items: start;
 }
@@ -582,12 +558,6 @@ input {
   font-weight: 700;
   text-align: right;
   font-variant-numeric: tabular-nums;
-}
-
-.tally__flips {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 8px;
 }
 
 .tally__status {
@@ -632,43 +602,59 @@ input {
   font-size: 1.3rem;
 }
 
-.flipped-card {
-  display: grid;
-  justify-items: center;
-  align-content: center;
-  width: 64px;
-  height: 84px;
-  padding: 4px;
-  background: var(--paper);
-  color: var(--ink);
-  border-radius: 8px;
+.flip-stack {
+  display: flex;
+  flex-direction: column;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.flip-stack--empty {
+  justify-content: center;
+  min-height: 160px;
+  padding: 16px;
+  border: 2px dashed var(--dusk-edge);
+  border-radius: 12px;
+  color: var(--mist);
   text-align: center;
-  animation: flip-in 320ms ease-out;
 }
 
-.flipped-card__value {
-  font-size: 1.5rem;
-  font-weight: 700;
-  line-height: 1.1;
+/* Every flipped card is full size; all but the newest are cut to their top band by the next card. */
+.flip-stack__item {
+  position: relative;
 }
 
-.flipped-card__name {
-  font-size: 0.7rem;
-  line-height: 1.2;
+.flip-stack__item:not(.flip-stack__item--last) {
+  height: var(--card-top-height);
 }
 
-.flipped-card--automiss {
+.flip-stack__item + .flip-stack__item .card {
+  box-shadow: 0 -3px 8px rgba(14, 16, 30, 0.45);
+}
+
+.flip-stack__item--last {
+  animation: deal 300ms ease-out;
+}
+
+@keyframes deal {
+  from {
+    opacity: 0;
+    transform: translateY(-24px) rotateX(35deg);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+.card--missed .card__top {
   background: var(--wound);
   color: var(--paper);
 }
 
-@keyframes flip-in {
-  from {
-    transform: perspective(400px) rotateY(90deg);
-  }
-  to {
-    transform: perspective(400px) rotateY(0);
-  }
+.card--missed .card__attack .icon {
+  color: var(--paper);
 }
 
 .draw-pile {
@@ -866,8 +852,18 @@ input {
   }
 }
 
+@media (max-width: 1100px) {
+  .arena {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  }
+
+  .arena__side {
+    grid-column: 1 / -1;
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
-  .flipped-card {
+  .flip-stack__item--last {
     animation: none;
   }
 

@@ -6,6 +6,7 @@ import {
   damageFrom,
   deckSize,
   fightTotal,
+  handAttack,
   isFightWon,
   neededToDefeat,
   type Fight,
@@ -109,22 +110,20 @@ function engage(draft: Draft, encounterId: string, attackCardId: string | null):
   if (state.phase.kind !== 'choose') throw new IllegalMoveError('You can only pick an encounter at the start of a turn');
   removeFrom(state.hand, encounterId, 'hand');
 
-  let cardAttack: number;
-  let contributorIds: string[] = [];
   if (state.rules.turnStyle === 'A') {
     const needsAttackCard = state.hand.length > 0;
     if (needsAttackCard !== (attackCardId !== null)) {
       throw new IllegalMoveError(needsAttackCard ? 'Turn A needs an attack card' : 'There is no card left to attack with');
     }
-    if (attackCardId !== null) {
-      removeFrom(state.hand, attackCardId, 'hand');
-      state.discard.push(attackCardId);
-    }
-    cardAttack = attackCardId === null ? 0 : cardOf(state, attackCardId).modifier;
-  } else {
-    if (attackCardId !== null) throw new IllegalMoveError('Turn B has no attack card: the cards left in hand contribute');
-    contributorIds = [...state.hand];
-    cardAttack = contributorIds.reduce((sum, id) => sum + cardOf(state, id).modifier, 0);
+  } else if (attackCardId !== null) {
+    throw new IllegalMoveError(`Turn ${state.rules.turnStyle} has no attack card`);
+  }
+  // Computed before the attack card leaves the hand, so Turn B counts the right cards.
+  const cardAttack = handAttack(state, encounterId, attackCardId);
+  const contributorIds = state.rules.turnStyle === 'B' ? [...state.hand] : [];
+  if (attackCardId !== null) {
+    removeFrom(state.hand, attackCardId, 'hand');
+    state.discard.push(attackCardId);
   }
 
   state.phase = { kind: 'fight', fight: newFight(encounterId, cardAttack, false) };
@@ -371,6 +370,6 @@ export function legalMoves(state: GameState): Move[] {
 
 function engagementsFor(state: GameState, encounterId: string): Move[] {
   const others = state.hand.filter((id) => id !== encounterId);
-  if (state.rules.turnStyle === 'B' || others.length === 0) return [{ kind: 'engage', encounterId, attackCardId: null }];
+  if (state.rules.turnStyle !== 'A' || others.length === 0) return [{ kind: 'engage', encounterId, attackCardId: null }];
   return others.map((attackCardId) => ({ kind: 'engage', encounterId, attackCardId }));
 }

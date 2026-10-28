@@ -1,7 +1,7 @@
 import { useCallback, useState } from 'react';
 import { CURRENT_SET } from '../cardsets/index.ts';
 import { applyMove, createGame } from '../engine/game.ts';
-import { RECOMMENDED_VARIANT_ID, variantFor } from '../engine/rules.ts';
+import { PLAYABLE_VARIANT_IDS, RECOMMENDED_VARIANT_ID, variantFor } from '../engine/rules.ts';
 import type { GameEvent, GameState, Move } from '../engine/state.ts';
 import { describeEvent } from './describeEvent.ts';
 
@@ -28,8 +28,9 @@ function loadSession(): Session | null {
     const saved = localStorage.getItem(STORAGE_KEY);
     if (!saved) return null;
     const session = JSON.parse(saved) as Session; // written by saveSession below
-    // A save from an older card set would mix rules; start fresh instead.
-    return session.log[0]?.endsWith(`set ${CURRENT_SET.version}`) ? session : null;
+    // A save from an older card set or a retired turn style would mix rules; start fresh instead.
+    const isCurrent = session.log[0]?.endsWith(`set ${CURRENT_SET.version}`) && PLAYABLE_VARIANT_IDS.includes(session.variantId);
+    return isCurrent ? session : null;
   } catch (error) {
     console.warn('Could not restore the saved game; starting a new one.', error);
     return null;

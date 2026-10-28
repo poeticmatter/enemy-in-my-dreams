@@ -17,10 +17,10 @@ const naive: Personality = {
     best(options, (option) => (option.encounter.isBoss ? -WIN : 0) - 100 * option.encounter.enemy.defense + option.attack),
 };
 
-/** Goes for the best loot it can probably beat. Flips when a couple of points short. */
+/** Goes for the best loot it can probably beat. Flips when about two cards short. */
 const greedy: Personality = {
   name: 'greedy',
-  flipPolicy: ({ gap }) => gap <= 2,
+  flipPolicy: ({ gap, meanFlip }) => gap <= 2 * meanFlip,
   spendableItems: allAttackItems,
   wantsShield: always,
   pickEngagement: (_state, options) => bestLootItCanProbablyBeat(options),
@@ -32,10 +32,10 @@ function bestLootItCanProbablyBeat(options: readonly RatedOption[], lootOf = (op
   return best(likely, (option) => (option.encounter.isBoss ? WIN : lootOf(option)) + option.chance);
 }
 
-/** Takes the safest fight. Flips only to cover a single point, and only if automiss cards are scarce. */
+/** Takes the safest fight. Flips only when one card should cover it, and only if automiss cards are scarce. */
 const cautious: Personality = {
   name: 'cautious',
-  flipPolicy: ({ gap, automissShare, flipsSoFar }) => gap <= 1 && automissShare <= 0.12 && flipsSoFar < 2,
+  flipPolicy: ({ gap, meanFlip, automissShare, flipsSoFar }) => gap <= meanFlip && automissShare <= 0.12 && flipsSoFar < 3,
   spendableItems: allAttackItems,
   wantsShield: always,
   pickEngagement: (_state, options) => {
@@ -49,7 +49,7 @@ const cautious: Personality = {
 /** Fights the boss the moment the odds look okay, and flips as long as it takes against it. */
 const bossRusher: Personality = {
   name: 'boss-rusher',
-  flipPolicy: ({ gap, isBossFight }) => isBossFight || gap <= 2,
+  flipPolicy: ({ gap, meanFlip, isBossFight }) => isBossFight || gap <= 2 * meanFlip,
   spendableItems: allAttackItems,
   wantsShield: always,
   pickEngagement: (_state, options) => {
@@ -64,7 +64,7 @@ const bossRusher: Personality = {
 /** Holds the boss as long as it can to loot up, saving every item for it. */
 const hoarder: Personality = {
   name: 'hoarder',
-  flipPolicy: ({ gap, isBossFight }) => isBossFight || gap <= 3,
+  flipPolicy: ({ gap, meanFlip, isBossFight }) => isBossFight || gap <= 3 * meanFlip,
   spendableItems: (state, encounter) => (encounter.isBoss ? allAttackItems(state) : []),
   wantsShield: always,
   pickEngagement: (state, options) => {
@@ -125,12 +125,16 @@ function expectedGain(option: RatedOption, damageWeight: number): number {
   return option.chance * lootValue(option.encounter.loot) - (1 - option.chance) * option.damageIfLost * damageWeight;
 }
 
-/** A kept card is next turn's attack option, unless it is persistent and a reshuffle is coming: then it's a forced fight. */
+/**
+ * A kept card is next turn's attack (Turn A and B; in Turn C hand cards never attack),
+ * unless it is persistent and a reshuffle is coming: then it's a forced fight.
+ */
 function keepValue(state: GameState, kept: readonly Card[]): number {
   const isForcedFightComing = isReshuffleNear(state);
+  const attackWeight = state.rules.turnStyle === 'C' ? 0 : 0.3;
   return kept.reduce((sum, entry) => {
     if (entry.isPersistent && isForcedFightComing) return sum - damageFrom(state, entry.id) - (entry.isBoss ? 3 : 0);
-    return sum + 0.3 * entry.modifier;
+    return sum + attackWeight * entry.modifier;
   }, 0);
 }
 

@@ -9,7 +9,7 @@ import { bossAndFlipTable, cardUsageTable, outcomeTable } from './report.ts';
 
 const SWEEPS: Record<string, string[]> = {
   boss: [0.05, 0.2, 0.35, 0.5, 0.65, 0.8, 0.95].map((threshold) => `smart:bossThreshold=${threshold}`),
-  chase: ['0', '0.5', '1', '2', '3', 'inf'].map((chase) => `smart:chase=${chase}`),
+  chase: ['0', '1', '2', '3', '4', '5', '6', '8', 'inf'].map((chase) => `smart:chase=${chase}`),
   bossChase: ['1', '2', '3', '5', '8', 'inf'].map((chase) => `smart:bossChase=${chase}`),
   // Only the deck size decides when it goes for the boss: how long is it worth holding?
   hold: [3, 5, 7, 9, 11, 13, 15, 18].map((deck) => `smart:bossThreshold=9,lastStand=${deck}`),

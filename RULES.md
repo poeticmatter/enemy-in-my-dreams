@@ -2,7 +2,7 @@
 
 Your draft rules, plus the gaps I had to fill. Every filled gap is marked **[default]**,
 and every rule I am *proposing* (not in your draft) is marked **[proposed]**. The
-playable build uses variant `A>+stakes` with card set v6.
+playable build uses variant `C>+stakes` (flip-only turn) with card set v7.
 
 ## Your draft, as implemented
 
@@ -46,5 +46,6 @@ playable build uses variant `A>+stakes` with card set v6.
 
 ## Variants in the simulator
 
-`A>` · `A>=` · `B>` · `B>=` are your draft. `…+stakes` adds Stakes. `…literal` uses unlimited reshuffles
+`A>` · `A>=` · `B>` · `B>=` are your draft. `C>` · `C>=` are the flip-only turn: fight one card, the others
+stay in hand and add nothing, flip, draw 1. `…+stakes` adds Stakes. `…literal` uses unlimited reshuffles
 (the draft read literally).

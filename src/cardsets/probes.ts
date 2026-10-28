@@ -13,3 +13,4 @@ export function bossProbes(base: CardSet): CardSet[] {
   }
   return probes;
 }
+
