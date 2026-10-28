@@ -121,7 +121,11 @@ function Menu({ session, onNewGame, onOpenRules }: MenuProps) {
 
 function GameLog({ lines }: { lines: readonly string[] }) {
   const endRef = useRef<HTMLLIElement>(null);
-  useEffect(() => endRef.current?.scrollIntoView({ block: 'nearest' }), [lines.length]);
+  // A block body on purpose: newer browsers return a Promise from scrollIntoView, and an effect
+  // that returns a non-function makes React crash when it tries to run it as a cleanup.
+  useEffect(() => {
+    endRef.current?.scrollIntoView({ block: 'nearest' });
+  }, [lines.length]);
   return (
     <aside className="log" aria-label="Game log">
       <h2 className="log__title">What happened</h2>
